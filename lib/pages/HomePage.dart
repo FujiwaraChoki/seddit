@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seddit/MenuSidebar.dart';
 import 'package:seddit/models/Post.dart';
+import 'package:seddit/pages/NewPostPage.dart';
 import 'package:seddit/pages/PostCard.dart';
 import 'package:seddit/pages/CommunitiesPage.dart';
 import 'package:seddit/providers/PostsProvider.dart';
@@ -36,7 +37,7 @@ class Homepage extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Newpostpage()));
           },
         ),
         IconButton(
