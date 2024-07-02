@@ -1,0 +1,80 @@
+// ignore_for_file: file_names
+
+import 'package:seddit/models/Post.dart';
+import 'package:mongo_dart/mongo_dart.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+class PostsService {
+  var db;
+
+  Future<void> create(Post post) async {
+    await _openDbIfNeeded();
+    _posts.insert(0, post);
+
+    await db.collection("posts").insertOne({
+      "id": post.id,
+      "title": post.title,
+      "content": post.content,
+      "author": post.author,
+    });
+
+    await db.close();
+  }
+
+  Future<List<Post>> readAll() async {
+    await _openDbIfNeeded();
+    var posts = await db.collection("posts").find().toList();
+    print(posts.length);
+
+    // Convert the mapped iterable to a List<Post> with explicit type casting
+    return posts.map<Post>((post) => Post(
+      post["title"] as String,
+      post["content"] as String,
+      author: post["author"] as String,
+      id: post["id"] as String,
+    )).toList();
+  }
+
+  Future<void> update(Post post) async {
+    await _openDbIfNeeded();
+    var index = _posts.indexWhere((element) => element.id == post.id);
+
+    if (index != -1) {
+      _posts[index] = post;
+
+      await db.collection("posts").update(
+        where.eq("id", post.id),
+        {
+          r'$set': {
+            "title": post.title,
+            "content": post.content,
+            "author": post.author,
+          }
+        },
+      );
+
+      await db.close();
+    }
+  }
+
+  Future<void> delete(String id) async {
+    await _openDbIfNeeded();
+    _posts.removeWhere((element) => element.id == id);
+
+    await db.collection("posts").remove(where.eq("id", id));
+    await db.close();
+  }
+
+  // Ensure the database connection is opened if needed
+  Future<void> _openDbIfNeeded() async {
+    if (db == null) {
+      db = await Db.create(dotenv.env["MONGODB_URI"]!);
+    }
+    if (!db.isConnected) {
+      await db.open();
+    }
+  }
+
+  // ignore: prefer_final_fields
+  List<Post> _posts = [];
+}
