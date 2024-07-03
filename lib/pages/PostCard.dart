@@ -5,30 +5,40 @@ import 'package:provider/provider.dart';
 import 'package:seddit/models/Post.dart';
 import 'package:seddit/providers/PostsProvider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:shake/shake.dart';
+import 'package:shake_detector_android/shake_detector_android.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
-  final bool fromNav;
+  final bool fromPostPage;
 
-  const PostCard(this.post, {this.fromNav = false, Key? key}) : super(key: key);
+  const PostCard(this.post, {this.fromPostPage = false, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    ShakeDetector detector = ShakeDetector.autoStart(
-      onPhoneShake: () {
-        Provider.of<PostsProvider>(context, listen: false).deletePost(post.id);
-        if (fromNav) {
-          Navigator.pop(context);
-        }
-      },
-    );
+    ShakeDetectorAndroid.startListening((e) {
+      // Exit
+      if (fromPostPage) {
+        Navigator.pop(context);
+      } else {
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+      }
+    });
+
+    String cleanContent(String content) {
+      // Remove markdown image tags if fromPostPage
+      if (!fromPostPage) {
+        return content.replaceAll(RegExp(r'!\[.*\]\(.*\)'), '');
+      }
+
+      return content;
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PostCard(post, fromNav: true),
+            builder: (context) => PostPage(post: post),
           ),
         );
       },
@@ -62,7 +72,7 @@ class PostCard extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               MarkdownBody(
-                data: post.content,
+                data: cleanContent(post.content),
                 styleSheet: MarkdownStyleSheet(
                   p: TextStyle(fontSize: 16.0),
                   blockSpacing: 8.0,

@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
@@ -28,8 +31,8 @@ class _NewpostpageState extends State<Newpostpage> {
   }
 
   Future<void> _createPost(BuildContext context) async {
-    final box = GetStorage();
-    var author = box.read("username") ?? "Anon";
+    var user = FirebaseAuth.instance.currentUser;
+    var author = user!.displayName;
     if (_base64Image != "") {
       _content += "![Image](data:image/png;base64,$_base64Image)";
     }
@@ -56,12 +59,10 @@ class _NewpostpageState extends State<Newpostpage> {
       },
     );
 
-    // Create the post
-    await Provider.of<PostsProvider>(context, listen: false).createPost(_title, _content, author);
+    // Create za Post
+    await Provider.of<PostsProvider>(context, listen: false).createPost(_title, _content, author!);
 
-    // Close the posting dialog
     Navigator.of(context).pop();
-    // Navigate back
     Navigator.of(context).pop();
   }
 

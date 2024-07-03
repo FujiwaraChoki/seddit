@@ -43,7 +43,8 @@ class Homepage extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.person),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage()));
+            // Redirect to /profile route with option to return
+            Navigator.pushNamed(context, "/profile");
           },
         ),
       ],
