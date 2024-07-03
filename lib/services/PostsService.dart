@@ -12,6 +12,7 @@ class PostsService {
     _posts.insert(0, post);
 
     await db.collection("posts").insertOne({
+      "_id": post.id,
       "id": post.id,
       "title": post.title,
       "content": post.content,
