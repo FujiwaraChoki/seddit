@@ -1,8 +1,8 @@
 // ignore_for_file: file_names
 
+import 'package:flutter/material.dart';
 import 'package:seddit/models/Post.dart';
 import 'package:seddit/services/PostsService.dart';
-import 'package:flutter/material.dart';
 
 class PostsProvider extends ChangeNotifier {
   PostsProvider(this._postsService);
