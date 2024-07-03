@@ -6,6 +6,8 @@ import "package:seddit/pages/CommunitiesPage.dart";
 import "package:seddit/pages/HomePage.dart";
 import "package:get_storage/get_storage.dart";
 import "package:seddit/pages/NewPostPage.dart";
+import "package:seddit/providers/CommunityProvider.dart";
+import "package:seddit/services/CommunityService.dart";
 import "package:seddit/services/PostsService.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:seddit/providers/PostsProvider.dart";
@@ -19,12 +21,15 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   PostsService service = PostsService();
-
   PostsProvider provider = PostsProvider(service);
+
+  CommunityService communityService = CommunityService();
+  CommunityProvider communityProvider = CommunityProvider(communityService);
 
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => provider),
+      ChangeNotifierProvider(create: (context) => communityProvider),
     ],
     child: const SedditApp(),),
   );

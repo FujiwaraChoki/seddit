@@ -1,7 +1,8 @@
 // ignore_for_file: file_names
 
-import 'package:seddit/models/Community.dart';
+import 'package:seddit/models/Post.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+import 'package:seddit/models/Community.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CommunityService {
@@ -181,5 +182,74 @@ class CommunityService {
       members: List<String>.from(community["members"] as List),
       admins: List<String>.from(community["admins"] as List),
     );
+  }
+
+  Future<Community> findCommunityByName(String name) async {
+    await _openDbIfNeeded();
+    var community = await db.collection("communities").findOne(where.eq("name", name));
+
+    return Community(
+      community["name"] as String,
+      community["description"] as String,
+      community["category"] as String,
+      id: community["id"] as String,
+      members: List<String>.from(community["members"] as List),
+      admins: List<String>.from(community["admins"] as List),
+    );
+  }
+
+  //findCommunitiesByCategory
+  Future<List<Community>> findCommunitiesByCategory(String category) async {
+    await _openDbIfNeeded();
+    var communities = await db.collection("communities").find(where.eq("category", category)).toList();
+
+    return communities.map<Community>((community) => Community(
+      community["name"] as String,
+      community["description"] as String,
+      community["category"] as String,
+      id: community["id"] as String,
+      members: List<String>.from(community["members"] as List),
+      admins: List<String>.from(community["admins"] as List),
+    )).toList();
+  }
+
+  Future<void> addPostToCommunity(String id, Post post) async {
+    await _openDbIfNeeded();
+    var index = _communities.indexWhere((element) => element.id == id);
+
+    if (index != -1) {
+      _communities[index].posts.add(post.id);
+
+      await db.collection("communities").update(
+        where.eq("id", id),
+        {
+          r'$set': {
+            "posts": _communities[index].posts,
+          }
+        },
+      );
+
+      await db.close();
+    }
+  }
+
+  Future<void> removePostFromCommunity(String id, String postId) async {
+    await _openDbIfNeeded();
+    var index = _communities.indexWhere((element) => element.id == id);
+
+    if (index != -1) {
+      _communities[index].posts.remove(postId);
+
+      await db.collection("communities").update(
+        where.eq("id", id),
+        {
+          r'$set': {
+            "posts": _communities[index].posts,
+          }
+        },
+      );
+
+      await db.close();
+    }
   }
 }

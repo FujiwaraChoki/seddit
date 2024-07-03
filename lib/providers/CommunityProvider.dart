@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:seddit/models/Post.dart';
 import 'package:seddit/models/Community.dart';
 import 'package:seddit/services/CommunityService.dart';
 
@@ -63,6 +64,30 @@ class CommunityProvider extends ChangeNotifier {
   void findCommunity(String id) {
     _communityService.findCommunityByID(id).then((community) {
       return community;
+    });
+  }
+
+  void findCommunityByName(String name) {
+    _communityService.findCommunityByName(name).then((community) {
+      return community;
+    });
+  }
+
+  void findCommunitiesByCategory(String category) {
+    _communityService.findCommunitiesByCategory(category).then((communities) {
+      return communities;
+    });
+  }
+
+  void addPostToCommunity(String communityId, Post post) {
+    _communityService.addPostToCommunity(communityId, post).then((_) {
+      notifyListeners();
+    });
+  }
+
+  void removePostFromCommunity(String communityId, String postId) {
+    _communityService.removePostFromCommunity(communityId, postId).then((_) {
+      notifyListeners();
     });
   }
 }
