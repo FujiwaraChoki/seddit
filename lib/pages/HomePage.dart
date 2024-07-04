@@ -1,19 +1,47 @@
 // ignore: file_names
 // ignore: avoid_print
-import "package:flutter/material.dart";
-import "package:provider/provider.dart";
-import "package:seddit/MenuSidebar.dart";
-import "package:seddit/models/Post.dart";
-import "package:seddit/pages/NewPostPage.dart";
-import "package:seddit/pages/PostCard.dart";
-import "package:seddit/pages/CommunitiesPage.dart";
-import "package:seddit/providers/PostsProvider.dart";
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seddit/MenuSidebar.dart';
+import 'package:seddit/models/Post.dart';
+import 'package:seddit/pages/NewPostPage.dart';
+import 'package:seddit/pages/PostCard.dart';
+import 'package:seddit/pages/CommunitiesPage.dart';
+import 'package:seddit/providers/PostsProvider.dart';
 
-class Homepage extends StatelessWidget {
+class Homepage extends StatefulWidget {
   Homepage({super.key});
 
+  @override
+  _HomepageState createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
   // Create a TextEditingController
   final TextEditingController _searchController = TextEditingController();
+  Future<List<Post>>? _filteredPosts;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredPosts = Provider.of<PostsProvider>(context, listen: false)
+          .posts
+          .then((posts) => posts.where((post) => post.title.toLowerCase().contains(query)).toList());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +85,7 @@ class Homepage extends StatelessWidget {
                 IconButton(
                   onPressed: () {
                     print("Search content: ${_searchController.text}");
+                    _onSearchChanged();
                   },
                   icon: const Icon(Icons.search),
                 ),
@@ -76,7 +105,7 @@ class Homepage extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: _PostsList(),
+        child: _PostsList(filteredPosts: _filteredPosts),
       ),
     );
   }
@@ -103,12 +132,18 @@ String cutText(String text, int length) {
 }
 
 class _PostsList extends StatelessWidget {
+  final Future<List<Post>>? filteredPosts;
+
+  const _PostsList({this.filteredPosts});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<PostsProvider>(
       builder: (context, postsProvider, child) {
+        final postsFuture = filteredPosts ?? postsProvider.posts;
+
         return FutureBuilder<List<Post>>(
-          future: postsProvider.posts,
+          future: postsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator(); // or any loading indicator
@@ -135,4 +170,3 @@ class _PostsList extends StatelessWidget {
     );
   }
 }
-
