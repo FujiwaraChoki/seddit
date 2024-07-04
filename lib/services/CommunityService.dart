@@ -1,9 +1,9 @@
 // ignore_for_file: file_names
 
-import 'package:seddit/models/Post.dart';
-import 'package:mongo_dart/mongo_dart.dart';
-import 'package:seddit/models/Community.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import "package:seddit/models/Post.dart";
+import "package:mongo_dart/mongo_dart.dart";
+import "package:seddit/models/Community.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 
 class CommunityService {
   var db;
@@ -20,6 +20,7 @@ class CommunityService {
       "description": community.description,
       "members": community.members,
       "admins": community.admins,
+      "posts": community.posts ?? [""],
     });
 
     await db.close();
@@ -35,6 +36,7 @@ class CommunityService {
       community["name"] as String,
       community["description"] as String,
       community["category"] as String,
+      posts: community["posts"] != null ? List<String>.from(community["posts"]) : [""],
       id: community["id"] as String,
       members: List<String>.from(community["members"] as List),
       admins: List<String>.from(community["admins"] as List),
@@ -51,11 +53,13 @@ class CommunityService {
       await db.collection("communities").update(
         where.eq("id", community.id),
         {
-          r'$set': {
+          r"$set": {
             "name": community.name,
             "description": community.description,
             "members": community.members,
             "admins": community.admins,
+            "category": community.category,
+            "posts": community.posts,
           }
         },
       );
@@ -74,12 +78,24 @@ class CommunityService {
   }
 
   Future<void> _openDbIfNeeded() async {
-    if (db == null) {
-      db = await Db.create(
-        'mongodb://${dotenv.env['MONGO_HOST']}:${dotenv.env['MONGO_PORT']}/${dotenv.env['MONGO_DB']}',
-      );
+    db ??= await Db.create(dotenv.env["MONGODB_URI"]!);
+    if (!db.isConnected) {
       await db.open();
     }
+  }
+
+  //findPostsByCommunity
+  Future<List<Post>> findPostsByCommunity(String id) async {
+    await _openDbIfNeeded();
+    var community = await db.collection("communities").findOne(where.eq("id", id));
+    var posts = await db.collection("posts").find(where.oneFrom("id", community["posts"])).toList();
+
+    return posts.map<Post>((post) => Post(
+      post["title"] as String,
+      post["content"] as String,
+      author: post["author"] as String,
+      id: post["id"] as String,
+    )).toList();
   }
 
   List<Community> _communities = [];
@@ -100,7 +116,7 @@ class CommunityService {
       await db.collection("communities").update(
         where.eq("id", id),
         {
-          r'$set': {
+          r"$set": {
             "members": _communities[index].members,
           }
         },
@@ -120,7 +136,7 @@ class CommunityService {
       await db.collection("communities").update(
         where.eq("id", id),
         {
-          r'$set': {
+          r"$set": {
             "members": _communities[index].members,
           }
         },
@@ -140,7 +156,7 @@ class CommunityService {
       await db.collection("communities").update(
         where.eq("id", id),
         {
-          r'$set': {
+          r"$set": {
             "admins": _communities[index].admins,
           }
         },
@@ -160,7 +176,7 @@ class CommunityService {
       await db.collection("communities").update(
         where.eq("id", id),
         {
-          r'$set': {
+          r"$set": {
             "admins": _communities[index].admins,
           }
         },
@@ -223,7 +239,7 @@ class CommunityService {
       await db.collection("communities").update(
         where.eq("id", id),
         {
-          r'$set': {
+          r"$set": {
             "posts": _communities[index].posts,
           }
         },
@@ -243,7 +259,7 @@ class CommunityService {
       await db.collection("communities").update(
         where.eq("id", id),
         {
-          r'$set': {
+          r"$set": {
             "posts": _communities[index].posts,
           }
         },

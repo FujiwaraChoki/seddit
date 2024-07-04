@@ -2,10 +2,7 @@ import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:seddit/firebase_options.dart";
-import "package:seddit/pages/CommunitiesPage.dart";
 import "package:seddit/pages/HomePage.dart";
-import "package:get_storage/get_storage.dart";
-import "package:seddit/pages/NewPostPage.dart";
 import "package:seddit/providers/CommunityProvider.dart";
 import "package:seddit/services/CommunityService.dart";
 import "package:seddit/services/PostsService.dart";
@@ -17,7 +14,6 @@ import "package:firebase_auth/firebase_auth.dart" hide EmailAuthProvider;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await GetStorage.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   PostsService service = PostsService();
@@ -74,7 +70,17 @@ class SedditApp extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text("Go back"),
+                // back button with icon and text
+                child: Center(
+                  child: Row(
+                    // center it
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.arrow_back),
+                      Text("Go Back"),
+                    ],
+                  ),
+                ),
               )
             ],
           );

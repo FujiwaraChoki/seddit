@@ -1,17 +1,15 @@
 // ignore_for_file: file_names
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seddit/models/Post.dart';
-import 'package:seddit/providers/PostsProvider.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:shake_detector_android/shake_detector_android.dart';
+import "package:flutter/material.dart";
+import "package:seddit/models/Post.dart";
+import "package:flutter_markdown/flutter_markdown.dart";
+import "package:shake_detector_android/shake_detector_android.dart";
 
 class PostCard extends StatelessWidget {
   final Post post;
   final bool fromPostPage;
 
-  const PostCard(this.post, {this.fromPostPage = false, Key? key}) : super(key: key);
+  const PostCard(this.post, {this.fromPostPage = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +18,14 @@ class PostCard extends StatelessWidget {
       if (fromPostPage) {
         Navigator.pop(context);
       } else {
-        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.popUntil(context, ModalRoute.withName("/"));
       }
     });
 
     String cleanContent(String content) {
       // Remove markdown image tags if fromPostPage
       if (!fromPostPage) {
-        return content.replaceAll(RegExp(r'!\[.*\]\(.*\)'), '');
+        return content.replaceAll(RegExp(r"!\[.*\]\(.*\)"), "");
       }
 
       return content;
@@ -63,7 +61,7 @@ class PostCard extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                'by ${post.author}',
+                "by ${post.author}",
                 style: TextStyle(
                   fontSize: 14.0,
                   fontStyle: FontStyle.italic,
@@ -74,14 +72,14 @@ class PostCard extends StatelessWidget {
               MarkdownBody(
                 data: cleanContent(post.content),
                 styleSheet: MarkdownStyleSheet(
-                  p: TextStyle(fontSize: 16.0),
+                  p: const TextStyle(fontSize: 16.0),
                   blockSpacing: 8.0,
                   codeblockDecoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   code: TextStyle(
-                    fontFamily: 'monospace',
+                    fontFamily: "monospace",
                     fontSize: 14.0,
                     backgroundColor: Colors.grey[200],
                   ),
@@ -98,7 +96,7 @@ class PostCard extends StatelessWidget {
 class PostPage extends StatelessWidget {
   final Post post;
 
-  const PostPage({required this.post, Key? key}) : super(key: key);
+  const PostPage({required this.post, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +125,7 @@ class PostPage extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                'by ${post.author}',
+                "by ${post.author}",
                 style: TextStyle(
                   fontSize: 16.0,
                   fontStyle: FontStyle.italic,
@@ -138,14 +136,14 @@ class PostPage extends StatelessWidget {
               MarkdownBody(
                 data: post.content,
                 styleSheet: MarkdownStyleSheet(
-                  p: TextStyle(fontSize: 16.0),
+                  p: const TextStyle(fontSize: 16.0),
                   blockSpacing: 8.0,
                   codeblockDecoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   code: TextStyle(
-                    fontFamily: 'monospace',
+                    fontFamily: "monospace",
                     fontSize: 14.0,
                     backgroundColor: Colors.grey[200],
                   ),

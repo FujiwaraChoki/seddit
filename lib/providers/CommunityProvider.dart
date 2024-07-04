@@ -1,9 +1,9 @@
 // ignore_for_file: file_names
 
-import 'package:flutter/material.dart';
-import 'package:seddit/models/Post.dart';
-import 'package:seddit/models/Community.dart';
-import 'package:seddit/services/CommunityService.dart';
+import "package:flutter/material.dart";
+import "package:seddit/models/Post.dart";
+import "package:seddit/models/Community.dart";
+import "package:seddit/services/CommunityService.dart";
 
 class CommunityProvider extends ChangeNotifier {
   CommunityProvider(this._communityService);
@@ -37,6 +37,16 @@ class CommunityProvider extends ChangeNotifier {
     });
   }
 
+  //findPostsByCommunity
+  List<Post> findPostsByCommunity(String id) {
+    _communityService.findPostsByCommunity(id).then((posts) {
+      notifyListeners();
+      return posts;
+    });
+
+    return [];
+  }
+
   void joinCommunity(String id, String userId) {
     _communityService.join(id, userId).then((_) {
       notifyListeners();
@@ -61,10 +71,10 @@ class CommunityProvider extends ChangeNotifier {
     });
   }
 
-  void findCommunity(String id) {
-    _communityService.findCommunityByID(id).then((community) {
-      return community;
-    });
+  Future<Community> findCommunityByID(String id) async {
+    Community cmnty = await _communityService.findCommunityByID(id);
+    
+    return cmnty;
   }
 
   void findCommunityByName(String name) {

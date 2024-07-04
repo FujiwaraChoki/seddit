@@ -9,7 +9,7 @@ namespace {
 
 /// Window attribute that enables dark mode window decorations.
 ///
-/// Redefined in case the developer's machine has a Windows SDK older than
+/// Redefined in case the developer"s machine has a Windows SDK older than
 /// version 10.0.22000.0.
 /// See: https://docs.microsoft.com/windows/win32/api/dwmapi/ne-dwmapi-dwmwindowattribute
 #ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
@@ -55,7 +55,7 @@ void EnableFullDpiSupportIfAvailable(HWND hwnd) {
 
 }  // namespace
 
-// Manages the Win32Window's window class registration.
+// Manages the Win32Window"s window class registration.
 class WindowClassRegistrar {
  public:
   ~WindowClassRegistrar() = default;
@@ -68,7 +68,7 @@ class WindowClassRegistrar {
     return instance_;
   }
 
-  // Returns the name of the window class, registering the class if it hasn't
+  // Returns the name of the window class, registering the class if it hasn"t
   // previously been registered.
   const wchar_t* GetWindowClass();
 

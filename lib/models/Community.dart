@@ -1,8 +1,8 @@
-import 'package:uuid/uuid.dart';
+import "package:uuid/uuid.dart";
 
 class Community {
   Community(this._name, this._description, this._category, {String? id, List<String>? members, List<String>? admins, List<String>? posts}) {
-    _id = id ?? Uuid().v4();
+    _id = id ?? const Uuid().v4();
   }
 
   String get id => _id;

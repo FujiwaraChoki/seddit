@@ -1,14 +1,13 @@
 // ignore: file_names
 // ignore: avoid_print
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seddit/MenuSidebar.dart';
-import 'package:seddit/models/Post.dart';
-import 'package:seddit/pages/NewPostPage.dart';
-import 'package:seddit/pages/PostCard.dart';
-import 'package:seddit/pages/CommunitiesPage.dart';
-import 'package:seddit/providers/PostsProvider.dart';
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:seddit/MenuSidebar.dart";
+import "package:seddit/models/Post.dart";
+import "package:seddit/pages/NewPostPage.dart";
+import "package:seddit/pages/PostCard.dart";
+import "package:seddit/pages/CommunitiesPage.dart";
+import "package:seddit/providers/PostsProvider.dart";
 
 class Homepage extends StatelessWidget {
   Homepage({super.key});
@@ -20,7 +19,7 @@ class Homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       persistentFooterAlignment: AlignmentDirectional.bottomCenter,
-      drawer: Sidebar(),
+      drawer: const Sidebar(),
       persistentFooterButtons: [
         IconButton(
           icon: const Icon(Icons.home),
@@ -31,13 +30,13 @@ class Homepage extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.people),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Communitiespage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const CommunitiesPage()));
           },
         ),
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Newpostpage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const Newpostpage()));
           },
         ),
         IconButton(
@@ -52,7 +51,7 @@ class Homepage extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Logo(),
+            const Logo(),
             Row(
               children: [
                 IconButton(
@@ -84,6 +83,8 @@ class Homepage extends StatelessWidget {
 }
 
 class Logo extends StatelessWidget {
+  const Logo({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const Image(
@@ -95,7 +96,7 @@ class Logo extends StatelessWidget {
 
 String cutText(String text, int length) {
   if (text.length > length) {
-    return text.substring(0, length) + "...";
+    return "${text.substring(0, length)}...";
   } else {
     return text;
   }
@@ -110,11 +111,11 @@ class _PostsList extends StatelessWidget {
           future: postsProvider.posts,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(); // or any loading indicator
+              return const CircularProgressIndicator(); // or any loading indicator
             } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Text("Error: ${snapshot.error}");
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Text('No posts available'); // or another fallback UI
+              return const Text("No posts available"); // or another fallback UI
             } else {
               var posts = snapshot.data!;
               return ListView.builder(

@@ -1,22 +1,26 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:seddit/models/Community.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seddit/providers/PostsProvider.dart';
+import 'package:seddit/providers/CommunityProvider.dart';
 
 class Newpostpage extends StatefulWidget {
+  const Newpostpage({super.key});
+
   @override
   _NewpostpageState createState() => _NewpostpageState();
 }
 
 class _NewpostpageState extends State<Newpostpage> {
-  String _title = '';
-  String _content = '';
-  String _base64Image = '';
+  String _title = "";
+  String _content = "";
+  String _base64Image = "";
+  String? _selectedCommunity;
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -39,7 +43,6 @@ class _NewpostpageState extends State<Newpostpage> {
 
     // Show posting dialog
     showDialog(
-      // The user CANNOT close this dialog by pressing outside it
       barrierDismissible: false,
       context: context,
       builder: (_) {
@@ -49,7 +52,7 @@ class _NewpostpageState extends State<Newpostpage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Posting...'),
+                Text("Posting..."),
                 SizedBox(height: 16),
                 CircularProgressIndicator(),
               ],
@@ -59,7 +62,7 @@ class _NewpostpageState extends State<Newpostpage> {
       },
     );
 
-    // Create za Post
+    // Create the post
     await Provider.of<PostsProvider>(context, listen: false).createPost(_title, _content, author!);
 
     Navigator.of(context).pop();
@@ -84,6 +87,41 @@ class _NewpostpageState extends State<Newpostpage> {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Consumer<CommunityProvider>(
+              builder: (context, communityProvider, child) {
+                return FutureBuilder<List<Community>>(
+                  future: communityProvider.communities,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return const Text("Error loading communities");
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text("No communities available");
+                    } else {
+                      return DropdownButton<String>(
+                        value: _selectedCommunity,
+                        hint: const Text("Select Community"),
+                        items: snapshot.data!.map((community) {
+                          return DropdownMenuItem<String>(
+                            value: community.name,
+                            child: Text(community.name),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedCommunity = value;
+                          });
+                        },
+                      );
+                    }
+                  },
+                );
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(

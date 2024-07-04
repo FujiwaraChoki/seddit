@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class Sidebar extends StatefulWidget {
-  Sidebar({Key? key}) : super(key: key);
+  const Sidebar({super.key});
 
   @override
   _SidebarState createState() => _SidebarState();

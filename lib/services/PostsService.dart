@@ -1,8 +1,8 @@
 // ignore_for_file: file_names
 
-import 'package:seddit/models/Post.dart';
-import 'package:mongo_dart/mongo_dart.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import "package:seddit/models/Post.dart";
+import "package:mongo_dart/mongo_dart.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 
 class PostsService {
   var db;
@@ -46,7 +46,7 @@ class PostsService {
       await db.collection("posts").update(
         where.eq("id", post.id),
         {
-          r'$set': {
+          r"$set": {
             "title": post.title,
             "content": post.content,
             "author": post.author,
@@ -66,13 +66,14 @@ class PostsService {
     await db.close();
   }
 
-  // Ensure the database connection is opened if needed
   Future<void> _openDbIfNeeded() async {
-    if (db == null) {
-      db = await Db.create(dotenv.env["MONGODB_URI"]!);
-    }
+    db ??= await Db.create(dotenv.env["MONGODB_URI"]!);
     if (!db.isConnected) {
       await db.open();
+    }
+
+    if (!db.collectionExists("posts")) {
+      await db.createCollection("posts");
     }
   }
 
