@@ -93,6 +93,7 @@ class CommunityService {
     return posts.map<Post>((post) => Post(
       post["title"] as String,
       post["content"] as String,
+      post["community"] as String,
       author: post["author"] as String,
       id: post["id"] as String,
     )).toList();

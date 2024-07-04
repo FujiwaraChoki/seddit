@@ -21,6 +21,7 @@ class _NewpostpageState extends State<Newpostpage> {
   String _content = "";
   String _base64Image = "";
   String? _selectedCommunity;
+  final TextEditingController _contentController = TextEditingController();
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -34,9 +35,31 @@ class _NewpostpageState extends State<Newpostpage> {
     }
   }
 
+  void _insertText(String text) {
+    final textSelection = _contentController.selection;
+    final newText = _contentController.text.replaceRange(
+      textSelection.start,
+      textSelection.end,
+      text,
+    );
+
+    setState(() {
+      _content = newText;
+      _contentController.text = newText;
+      _contentController.selection = textSelection.copyWith(
+        baseOffset: textSelection.start + text.length,
+        extentOffset: textSelection.start + text.length,
+      );
+    });
+  }
+
   Future<void> _createPost(BuildContext context) async {
     var user = FirebaseAuth.instance.currentUser;
-    var author = user!.displayName;
+    var author = {
+      "id": user!.uid,
+      "name": user.displayName,
+      "email": user.email,
+    };
     if (_base64Image != "") {
       _content += "![Image](data:image/png;base64,$_base64Image)";
     }
@@ -63,7 +86,8 @@ class _NewpostpageState extends State<Newpostpage> {
     );
 
     // Create the post
-    await Provider.of<PostsProvider>(context, listen: false).createPost(_title, _content, author!);
+    await Provider.of<PostsProvider>(context, listen: false)
+        .createPost(_title, _content, json.encode(author), _selectedCommunity!);
 
     Navigator.of(context).pop();
     Navigator.of(context).pop();
@@ -136,6 +160,7 @@ class _NewpostpageState extends State<Newpostpage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              controller: _contentController,
               decoration: const InputDecoration(labelText: "Content"),
               maxLines: 5,
               onChanged: (value) {
@@ -157,11 +182,15 @@ class _NewpostpageState extends State<Newpostpage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.list),
-                  onPressed: () {},
+                  onPressed: () {
+                    _insertText("\n- Item 1\n- Item 2\n- Item 3\n");
+                  },
                 ),
                 IconButton(
                   icon: const Icon(Icons.link),
-                  onPressed: () {},
+                  onPressed: () {
+                    _insertText("[Link Text](http://example.com)");
+                  },
                 ),
               ],
             ),

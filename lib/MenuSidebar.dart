@@ -22,7 +22,7 @@ class _SidebarState extends State<Sidebar> {
           ),
           ListTile(
             title: const Text(
-              "Recently visited",
+              "Popular",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,

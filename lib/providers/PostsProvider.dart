@@ -9,8 +9,8 @@ class PostsProvider extends ChangeNotifier {
 
   Future<List<Post>> get posts => _postsService.readAll();
 
-  Future<void> createPost(String title, String content, String author) async {
-    await _postsService.create(Post(title, content, author: author));
+  Future<void> createPost(String title, String content, String author, String community) async {
+    await _postsService.create(Post(title, content, community, author: author));
     notifyListeners();
   }
 

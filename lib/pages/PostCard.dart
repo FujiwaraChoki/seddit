@@ -1,9 +1,25 @@
-// ignore_for_file: file_names
-
+import "dart:convert";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:seddit/models/Post.dart";
 import "package:flutter_markdown/flutter_markdown.dart";
+import "package:seddit/providers/PostsProvider.dart";
 import "package:shake_detector_android/shake_detector_android.dart";
+import "package:firebase_auth/firebase_auth.dart"; // Import Firebase Auth
+
+String cleanContent(String content, bool fromPostPage) {
+  String cleanedContent = content;
+  // Remove markdown image tags if fromPostPage
+  if (!fromPostPage) {
+    cleanedContent = cleanedContent.replaceAll(RegExp(r"!\[.*\]\(.*\)"), "");
+  }
+
+  if (cleanedContent.length > 43) {
+    cleanedContent = cleanedContent.substring(0, 40) + "...";
+  }
+
+  return cleanedContent;
+}
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -22,14 +38,7 @@ class PostCard extends StatelessWidget {
       }
     });
 
-    String cleanContent(String content) {
-      // Remove markdown image tags if fromPostPage
-      if (!fromPostPage) {
-        return content.replaceAll(RegExp(r"!\[.*\]\(.*\)"), "");
-      }
-
-      return content;
-    }
+    Map author = json.decode(post.author);
 
     return GestureDetector(
       onTap: () {
@@ -41,7 +50,7 @@ class PostCard extends StatelessWidget {
         );
       },
       child: Card(
-        margin: const EdgeInsets.all(30.0),
+        margin: const EdgeInsets.all(15.0),
         elevation: 4.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -61,7 +70,7 @@ class PostCard extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                "by ${post.author}",
+                "by ${author["name"]}",
                 style: TextStyle(
                   fontSize: 14.0,
                   fontStyle: FontStyle.italic,
@@ -70,7 +79,7 @@ class PostCard extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               MarkdownBody(
-                data: cleanContent(post.content),
+                data: cleanContent(post.content, fromPostPage),
                 styleSheet: MarkdownStyleSheet(
                   p: const TextStyle(fontSize: 16.0),
                   blockSpacing: 8.0,
@@ -98,8 +107,16 @@ class PostPage extends StatelessWidget {
 
   const PostPage({required this.post, super.key});
 
+  void _deletePost(BuildContext context) {
+    Provider.of<PostsProvider>(context, listen: false).deletePost(post.id);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final author = json.decode(post.author);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -109,6 +126,39 @@ class PostPage extends StatelessWidget {
           },
         ),
         title: Text(post.title),
+        actions: [
+          if (currentUser!.uid == author["id"])
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                // Show a confirmation dialog before deleting
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Delete Post"),
+                      content: const Text("Are you sure you want to delete this post?"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text("Cancel"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text("Delete"),
+                          onPressed: () {
+                            _deletePost(context);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -125,7 +175,7 @@ class PostPage extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                "by ${post.author}",
+                "by ${author["name"]}",
                 style: TextStyle(
                   fontSize: 16.0,
                   fontStyle: FontStyle.italic,

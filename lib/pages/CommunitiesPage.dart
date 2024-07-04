@@ -33,18 +33,10 @@ class CommunitiesPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Find by Category", style: Theme.of(context).textTheme.displaySmall),
-            const SizedBox(height: 8),
-            const Wrap(
-              spacing: 8.0,
-              children: [
-                CategoryChip(label: "Gaming"),
-                CategoryChip(label: "Food"),
-                CategoryChip(label: "Pop Culture"),
-              ],
-            ),
             const SizedBox(height: 16),
             Text("Explore", style: Theme.of(context).textTheme.displaySmall),
+            const SizedBox(height: 8),
+            Text("Find and explore new communities to hang out, chat, and have fun with!", style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(height: 8),
             Expanded(
               child: Consumer<CommunityProvider>(

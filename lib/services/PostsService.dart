@@ -16,6 +16,7 @@ class PostsService {
       "id": post.id,
       "title": post.title,
       "content": post.content,
+      "community": post.community,
       "author": post.author,
     });
 
@@ -31,6 +32,7 @@ class PostsService {
     return posts.map<Post>((post) => Post(
       post["title"] as String,
       post["content"] as String,
+      post["community"] as String,
       author: post["author"] as String,
       id: post["id"] as String,
     )).toList();
@@ -70,10 +72,6 @@ class PostsService {
     db ??= await Db.create(dotenv.env["MONGODB_URI"]!);
     if (!db.isConnected) {
       await db.open();
-    }
-
-    if (!db.collectionExists("posts")) {
-      await db.createCollection("posts");
     }
   }
 
