@@ -10,7 +10,7 @@ import 'package:seddit/pages/CommunitiesPage.dart';
 import 'package:seddit/providers/PostsProvider.dart';
 
 class Homepage extends StatefulWidget {
-  Homepage({super.key});
+  const Homepage({super.key});
 
   @override
   _HomepageState createState() => _HomepageState();
@@ -52,7 +52,7 @@ class _HomepageState extends State<Homepage> {
         IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Homepage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const Homepage()));
           },
         ),
         IconButton(
@@ -76,6 +76,17 @@ class _HomepageState extends State<Homepage> {
         ),
       ],
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

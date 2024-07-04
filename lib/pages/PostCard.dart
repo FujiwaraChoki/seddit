@@ -6,6 +6,7 @@ import "package:flutter_markdown/flutter_markdown.dart";
 import "package:seddit/providers/PostsProvider.dart";
 import "package:shake_detector_android/shake_detector_android.dart";
 import "package:firebase_auth/firebase_auth.dart"; // Import Firebase Auth
+import "package:flutter_secure_storage/flutter_secure_storage.dart";
 
 String cleanContent(String content, bool fromPostPage) {
   String cleanedContent = content;
@@ -15,7 +16,7 @@ String cleanContent(String content, bool fromPostPage) {
   }
 
   if (cleanedContent.length > 43) {
-    cleanedContent = cleanedContent.substring(0, 40) + "...";
+    cleanedContent = "${cleanedContent.substring(0, 40)}...";
   }
 
   return cleanedContent;
@@ -24,17 +25,24 @@ String cleanContent(String content, bool fromPostPage) {
 class PostCard extends StatelessWidget {
   final Post post;
   final bool fromPostPage;
+  final storage = new FlutterSecureStorage();
 
-  const PostCard(this.post, {this.fromPostPage = false, super.key});
+  PostCard(this.post, {this.fromPostPage = false, super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+    Future<String?> readValue(String key) async {
+      return await storage.read(key: key);
+    }
+
     ShakeDetectorAndroid.startListening((e) {
-      // Exit
-      if (fromPostPage) {
-        Navigator.pop(context);
-      } else {
-        Navigator.popUntil(context, ModalRoute.withName("/"));
+      if (readValue("exitOnShake") == "true") {
+        // Exit
+        if (fromPostPage) {
+          Navigator.pop(context);
+        } else {
+          Navigator.popUntil(context, ModalRoute.withName("/"));
+        }
       }
     });
 

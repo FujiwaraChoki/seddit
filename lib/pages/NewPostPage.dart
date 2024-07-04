@@ -87,7 +87,7 @@ class _NewpostpageState extends State<Newpostpage> {
 
     // Create the post
     await Provider.of<PostsProvider>(context, listen: false)
-        .createPost(_title, _content, json.encode(author), _selectedCommunity!);
+        .createPost(_title, _content, json.encode(author), _selectedCommunity);
 
     Navigator.of(context).pop();
     Navigator.of(context).pop();

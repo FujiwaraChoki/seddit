@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter_secure_storage/flutter_secure_storage.dart";
 
 class Sidebar extends StatefulWidget {
   const Sidebar({super.key});
@@ -10,6 +11,16 @@ class Sidebar extends StatefulWidget {
 class _SidebarState extends State<Sidebar> {
   @override
   Widget build(BuildContext context) {
+    final storage = new FlutterSecureStorage();
+
+    Future<String?> readValue(String key) async {
+      return await storage.read(key: key);
+    }
+
+    void writeValue(String key, String value) async {
+      await storage.write(key: key, value: value);
+    }
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -22,7 +33,7 @@ class _SidebarState extends State<Sidebar> {
           ),
           ListTile(
             title: const Text(
-              "Popular",
+              "Settings",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -30,15 +41,15 @@ class _SidebarState extends State<Sidebar> {
             ),
             onTap: () {},
           ),
+          // Exit post on shake
           ListTile(
-            title: const Text("r/popular"),
-            onTap: () {
-              // Update the state of the app
-              // Send notification
-              print("pressed.");
-              // Then close the drawer
-              Navigator.pop(context);
-            },
+            title: const Text("Exit on Shake"),
+            trailing: Switch(
+              value: readValue("exitOnShake") == "true",
+              onChanged: (value) {
+                writeValue("exitOnShake", value.toString());
+              },
+            ),
           ),
         ],
       ),

@@ -46,7 +46,7 @@ class SedditApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        "/": (context) => Homepage(),
+        "/": (context) => const Homepage(),
         "/login": (context) {
           return SignInScreen(
             providers: providers,
@@ -71,7 +71,7 @@ class SedditApp extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 // back button with icon and text
-                child: Center(
+                child: const Center(
                   child: Row(
                     // center it
                     mainAxisAlignment: MainAxisAlignment.center,
