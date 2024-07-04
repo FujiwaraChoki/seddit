@@ -14,10 +14,6 @@ class CommunitiesPage extends StatelessWidget {
         title: const Text("Community Explorer"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
               showDialog(
