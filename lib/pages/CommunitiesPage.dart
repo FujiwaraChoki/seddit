@@ -7,7 +7,7 @@ import "package:seddit/providers/CommunityProvider.dart";
 class CommunitiesPage extends StatelessWidget {
   const CommunitiesPage({super.key});
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +61,7 @@ class CommunitiesPage extends StatelessWidget {
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
                             final community = snapshot.data![index];
-                            return CommunityChip(label: "s/${community.name}", id: community.id);
+                            return CommunityChip(label: "s/${community.name}", name: community.name);
                           },
                         );
                       }
@@ -94,17 +94,17 @@ class CategoryChip extends StatelessWidget {
 class CommunityChip extends StatelessWidget {
   final String label;
   
-  var id;
+  var name;
 
-  CommunityChip({super.key, required this.label, required this.id});
+  CommunityChip({super.key, required this.label, required this.name});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print("Navigating to community $id");
+        print("Navigating to community $name");
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => CommunityPage(communityId: id),
+          builder: (context) => CommunityPage(communityName: name,),
         ));
       },
       child: Chip(

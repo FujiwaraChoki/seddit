@@ -1,13 +1,15 @@
-import "package:flutter/material.dart";
-import "package:provider/provider.dart";
-import "package:seddit/models/Community.dart";
-import "package:seddit/models/Post.dart";
-import "package:seddit/providers/CommunityProvider.dart";
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:seddit/models/Community.dart';
+import 'package:seddit/models/Post.dart';
+import 'package:seddit/pages/PostCard.dart';
+import 'package:seddit/providers/CommunityProvider.dart';
 
 class CommunityPage extends StatefulWidget {
-  final String communityId;
+  final String communityName;
 
-  const CommunityPage({super.key, required this.communityId});
+  const CommunityPage({super.key, required this.communityName});
 
   @override
   _CommunityPageState createState() => _CommunityPageState();
@@ -38,7 +40,7 @@ class _CommunityPageState extends State<CommunityPage> {
         ],
       ),
       body: FutureBuilder<Community>(
-        future: Provider.of<CommunityProvider>(context, listen: false).findCommunityByID(widget.communityId),
+        future: Provider.of<CommunityProvider>(context, listen: false).findCommunityByID(widget.communityName),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -59,7 +61,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   const SizedBox(height: 16),
                   Expanded(
                     child: FutureBuilder<List<Post>>(
-                      future: _getPosts(community.id),
+                      future: _getPosts(community.name),
                       builder: (context, postSnapshot) {
                         if (postSnapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
@@ -73,11 +75,23 @@ class _CommunityPageState extends State<CommunityPage> {
                             itemCount: posts.length,
                             itemBuilder: (context, index) {
                               final post = posts[index];
-                              return ListTile(
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PostPage(post: post),
+                                    ),
+                                  );
+                                },
+                                child: ListTile(
                                 title: Text(post.title),
                                 subtitle: Text(post.content),
-                                trailing: Text(post.author),
-                              );
+                                trailing: SizedBox(
+                                  width: 80, // Adjust the width as necessary
+                                  child: Text(json.decode(post.author)["name"]),
+                                ),
+                              ));
                             },
                           );
                         }
@@ -93,18 +107,13 @@ class _CommunityPageState extends State<CommunityPage> {
     );
   }
 
-  Future<List<Post>> _getPosts(String communityId) async {
-    List<Post> posts = Provider.of<CommunityProvider>(context, listen: false).findPostsByCommunity(communityId);
-
+  Future<List<Post>> _getPosts(String communityName) async {
+    final posts = await Provider.of<CommunityProvider>(context, listen: false).findPostsByCommunity(communityName);
     if (filterTitle != null) {
-      posts = posts.where((post) => post.title.contains(filterTitle!)).toList();
+      return posts.where((post) => post.title.contains(filterTitle!)).toList();
+    } else {
+      return posts;
     }
-
-    if (sortAlphabetically) {
-      posts.sort((a, b) => a.title.compareTo(b.title));
-    }
-
-    return posts;
   }
 
   Future<void> _showSortDialog() async {

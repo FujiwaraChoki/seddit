@@ -20,6 +20,12 @@ class PostsService {
       "author": post.author,
     });
 
+    // find community and add to posts array
+    await db.collection("communities").update(
+      where.eq("name", post.community),
+      modify.push("posts", post.id),
+    );
+
     await db.close();
   }
 

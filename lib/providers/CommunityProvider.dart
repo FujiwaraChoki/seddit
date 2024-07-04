@@ -6,6 +6,8 @@ import "package:seddit/models/Community.dart";
 import "package:seddit/services/CommunityService.dart";
 
 class CommunityProvider extends ChangeNotifier {
+  final CommunityService _communityService;
+
   CommunityProvider(this._communityService);
 
   Future<List<Community>> get communities => _communityService.readAll();
@@ -15,89 +17,65 @@ class CommunityProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCommunity(Community community) {
-    _communityService.update(community).then((_) {
-      notifyListeners();
-    });
+  void updateCommunity(Community community) async {
+    await _communityService.update(community);
+    notifyListeners();
   }
 
-  final CommunityService _communityService;
-
-  List<Community> readAll() {
-    _communityService.readAll().then((communities) {
-      return communities;
-    });
-
-    return [];
+  Future<List<Community>> readAll() async {
+    return await _communityService.readAll();
   }
 
-  void deleteCommunity(String id) {
-    _communityService.delete(id).then((_) {
-      notifyListeners();
-    });
+  void deleteCommunity(String id) async {
+    await _communityService.delete(id);
+    notifyListeners();
   }
 
-  //findPostsByCommunity
-  List<Post> findPostsByCommunity(String id) {
-    _communityService.findPostsByCommunity(id).then((posts) {
-      notifyListeners();
-      return posts;
-    });
-
-    return [];
+  Future<List<Post>> findPostsByCommunity(String name) async {
+    List<Post> postsList = await _communityService.findPostsByCommunity(name);
+    notifyListeners();
+    return postsList;
   }
 
-  void joinCommunity(String id, String userId) {
-    _communityService.join(id, userId).then((_) {
-      notifyListeners();
-    });
+  void joinCommunity(String id, String userId) async {
+    await _communityService.join(id, userId);
+    notifyListeners();
   }
 
-  void leaveCommunity(String id, String userId) {
-    _communityService.leave(id, userId).then((_) {
-      notifyListeners();
-    });
+  void leaveCommunity(String id, String userId) async {
+    await _communityService.leave(id, userId);
+    notifyListeners();
   }
 
-  void addAdmin(String id, String userId) {
-    _communityService.addAdmin(id, userId).then((_) {
-      notifyListeners();
-    });
+  void addAdmin(String id, String userId) async {
+    await _communityService.addAdmin(id, userId);
+    notifyListeners();
   }
 
-  void removeAdmin(String id, String userId) {
-    _communityService.removeAdmin(id, userId).then((_) {
-      notifyListeners();
-    });
+  void removeAdmin(String id, String userId) async {
+    await _communityService.removeAdmin(id, userId);
+    notifyListeners();
   }
 
   Future<Community> findCommunityByID(String id) async {
-    Community cmnty = await _communityService.findCommunityByID(id);
-    
-    return cmnty;
+    return await _communityService.findCommunityByID(id);
   }
 
-  void findCommunityByName(String name) {
-    _communityService.findCommunityByName(name).then((community) {
-      return community;
-    });
+  Future<Community> findCommunityByName(String name) async {
+    return await _communityService.findCommunityByName(name);
   }
 
-  void findCommunitiesByCategory(String category) {
-    _communityService.findCommunitiesByCategory(category).then((communities) {
-      return communities;
-    });
+  Future<List<Community>> findCommunitiesByCategory(String category) async {
+    return await _communityService.findCommunitiesByCategory(category);
   }
 
-  void addPostToCommunity(String communityId, Post post) {
-    _communityService.addPostToCommunity(communityId, post).then((_) {
-      notifyListeners();
-    });
+  void addPostToCommunity(String communityId, Post post) async {
+    await _communityService.addPostToCommunity(communityId, post);
+    notifyListeners();
   }
 
-  void removePostFromCommunity(String communityId, String postId) {
-    _communityService.removePostFromCommunity(communityId, postId).then((_) {
-      notifyListeners();
-    });
+  void removePostFromCommunity(String communityId, String postId) async {
+    await _communityService.removePostFromCommunity(communityId, postId);
+    notifyListeners();
   }
 }

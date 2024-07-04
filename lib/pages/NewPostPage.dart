@@ -20,7 +20,7 @@ class _NewpostpageState extends State<Newpostpage> {
   String _title = "";
   String _content = "";
   String _base64Image = "";
-  String? _selectedCommunity;
+  late String _selectedCommunity;
   final TextEditingController _contentController = TextEditingController();
 
   Future<void> _pickImage() async {
@@ -136,7 +136,7 @@ class _NewpostpageState extends State<Newpostpage> {
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            _selectedCommunity = value;
+                            _selectedCommunity = value!;
                           });
                         },
                       );

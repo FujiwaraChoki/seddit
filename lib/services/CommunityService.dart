@@ -20,7 +20,7 @@ class CommunityService {
       "description": community.description,
       "members": community.members,
       "admins": community.admins,
-      "posts": community.posts ?? [""],
+      "posts": community.posts ?? [],
     });
 
     await db.close();
@@ -29,14 +29,13 @@ class CommunityService {
   Future<List<Community>> readAll() async {
     await _openDbIfNeeded();
     var communities = await db.collection("communities").find().toList();
-    print(communities.length);
 
     // Convert the mapped iterable to a List<Community> with explicit type casting
     return communities.map<Community>((community) => Community(
       community["name"] as String,
       community["description"] as String,
       community["category"] as String,
-      posts: community["posts"] != null ? List<String>.from(community["posts"]) : [""],
+      posts: List<String>.from(community["posts"] ?? []),
       id: community["id"] as String,
       members: List<String>.from(community["members"] as List),
       admins: List<String>.from(community["admins"] as List),
@@ -59,7 +58,7 @@ class CommunityService {
             "members": community.members,
             "admins": community.admins,
             "category": community.category,
-            "posts": community.posts,
+            "posts": community.posts ?? [],
           }
         },
       );
@@ -84,11 +83,31 @@ class CommunityService {
     }
   }
 
-  //findPostsByCommunity
-  Future<List<Post>> findPostsByCommunity(String id) async {
+  Future<List<Post>> findPostsByCommunity(String name) async {
     await _openDbIfNeeded();
-    var community = await db.collection("communities").findOne(where.eq("id", id));
-    var posts = await db.collection("posts").find(where.oneFrom("id", community["posts"])).toList();
+    var coll = db.collection("communities");
+    print("Finding posts for community: $name");
+    var community = await coll.findOne(where.eq("name", name));
+    if (community == null) {
+      return [];
+    }
+
+    var postIds = community["posts"];
+    print(
+      "Post IDs: $postIds"
+    );
+    var posts = [];
+
+    for (var postId in postIds) {
+      var coll_2 = db.collection("posts");
+      var post = await coll_2.findOne(where.eq("id", postId));
+      if (post != null) {
+        print(post);
+        posts.add(post);
+      }
+    }
+
+    await db.close();
 
     return posts.map<Post>((post) => Post(
       post["title"] as String,
@@ -146,7 +165,7 @@ class CommunityService {
       await db.close();
     }
   }
-  
+
   Future<void> addAdmin(String id, String userId) async {
     await _openDbIfNeeded();
     var index = _communities.indexWhere((element) => element.id == id);
@@ -187,9 +206,12 @@ class CommunityService {
     }
   }
 
-  Future<Community> findCommunityByID(String id) async {
+  Future<Community> findCommunityByID(String name) async {
     await _openDbIfNeeded();
-    var community = await db.collection("communities").findOne(where.eq("id", id));
+    var coll = db.collection("communities");
+    var community = await coll.findOne(where.eq("name", name));
+
+    print(community);
 
     return Community(
       community["name"] as String,
@@ -198,12 +220,14 @@ class CommunityService {
       id: community["id"] as String,
       members: List<String>.from(community["members"] as List),
       admins: List<String>.from(community["admins"] as List),
+      posts: List<String>.from(community["posts"] as List),
     );
   }
 
   Future<Community> findCommunityByName(String name) async {
     await _openDbIfNeeded();
-    var community = await db.collection("communities").findOne(where.eq("name", name));
+    var coll = db.collection("communities");
+    var community = await coll.findOne(where.eq("name", name));
 
     return Community(
       community["name"] as String,
@@ -212,13 +236,14 @@ class CommunityService {
       id: community["id"] as String,
       members: List<String>.from(community["members"] as List),
       admins: List<String>.from(community["admins"] as List),
+      posts: List<String>.from(community["posts"] ?? []),
     );
   }
 
-  //findCommunitiesByCategory
   Future<List<Community>> findCommunitiesByCategory(String category) async {
     await _openDbIfNeeded();
-    var communities = await db.collection("communities").find(where.eq("category", category)).toList();
+    var coll = db.collection("communities");
+    var communities = await coll.find(where.eq("category", category)).toList();
 
     return communities.map<Community>((community) => Community(
       community["name"] as String,
@@ -227,6 +252,7 @@ class CommunityService {
       id: community["id"] as String,
       members: List<String>.from(community["members"] as List),
       admins: List<String>.from(community["admins"] as List),
+      posts: List<String>.from(community["posts"] ?? []),
     )).toList();
   }
 
