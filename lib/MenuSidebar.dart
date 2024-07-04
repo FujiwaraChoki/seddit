@@ -1,5 +1,5 @@
-import "package:flutter/material.dart";
-import "package:flutter_secure_storage/flutter_secure_storage.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Sidebar extends StatefulWidget {
   const Sidebar({super.key});
@@ -9,18 +9,28 @@ class Sidebar extends StatefulWidget {
 }
 
 class _SidebarState extends State<Sidebar> {
+  final storage = FlutterSecureStorage();
+  bool exitOnShake = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExitOnShake();
+  }
+
+  Future<void> _loadExitOnShake() async {
+    String? value = await storage.read(key: "exitOnShake");
+    setState(() {
+      exitOnShake = value == "true";
+    });
+  }
+
+  Future<void> _writeExitOnShake(bool value) async {
+    await storage.write(key: "exitOnShake", value: value.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final storage = new FlutterSecureStorage();
-
-    Future<String?> readValue(String key) async {
-      return await storage.read(key: key);
-    }
-
-    void writeValue(String key, String value) async {
-      await storage.write(key: key, value: value);
-    }
-
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -41,13 +51,15 @@ class _SidebarState extends State<Sidebar> {
             ),
             onTap: () {},
           ),
-          // Exit post on shake
           ListTile(
             title: const Text("Exit on Shake"),
             trailing: Switch(
-              value: readValue("exitOnShake") == "true",
+              value: exitOnShake,
               onChanged: (value) {
-                writeValue("exitOnShake", value.toString());
+                setState(() {
+                  exitOnShake = value;
+                });
+                _writeExitOnShake(value);
               },
             ),
           ),
