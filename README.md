@@ -4,6 +4,9 @@ Seddit a Reddit clone written using the framework Flutter with all platforms in 
 
 # Installation
 
+> Make sure your .env file has the following keys:
+> - `MONGODB_URI`
+
 1. Clone the repository
 ```
 git clone https://github.com/FujiwaraChoki/seddit.git
