@@ -46,18 +46,16 @@ class PostsService {
 
   Future<void> update(Post post) async {
     await _openDbIfNeeded();
-    var index = _posts.indexWhere((element) => element.id == post.id);
-
-    if (index != -1) {
-      _posts[index] = post;
-    }
+    
+    await db.collection("posts").update(
+      where.eq("id", post.id),
+      modify.set("title", post.title),
+    );
 
     await db.collection("posts").update(
       where.eq("id", post.id),
-      modify.set("title", post.title).set("content", post.content),
+      modify.set("content", post.content),
     );
-
-    await db.close();
   }
 
   Future<void> delete(String id) async {

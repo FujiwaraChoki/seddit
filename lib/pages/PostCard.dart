@@ -267,7 +267,6 @@ class _EditPostPageState extends State<EditPostPage> {
     );
 
     Provider.of<PostsProvider>(context, listen: false).updatePost(newPost);
-    print(_contentController.text);
     Navigator.pop(context);
   }
 
