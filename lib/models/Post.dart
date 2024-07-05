@@ -12,9 +12,18 @@ class Post {
   String get community => _community;
   String get author => _author;
 
+  // Setters for title and content
+  void setTitle(String title) {
+    _title = title;
+  }
+
+  void setContent(String content) {
+    _content = content;
+  }
+
   final String _id;
-  final String _title;
-  final String _content;
+  String _title;
+  String _content;
   final String _community;
   final String _author;
 }
