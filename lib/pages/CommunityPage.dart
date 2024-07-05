@@ -21,6 +21,18 @@ class _CommunityPageState extends State<CommunityPage> {
 
   @override
   Widget build(BuildContext context) {
+  String cleanContent(String content) {
+    String cleanedContent = content;
+    // Remove markdown image tags if fromPostPage
+    cleanedContent = cleanedContent.replaceAll(RegExp(r"!\[.*\]\(.*\)"), "");
+    
+    if (cleanedContent.length > 20) {
+      cleanedContent = "${cleanedContent.substring(0, 20)}...";
+    }
+
+    return cleanedContent;
+  }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Community Details"),
@@ -86,7 +98,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                 },
                                 child: ListTile(
                                 title: Text(post.title),
-                                subtitle: Text(post.content),
+                                subtitle: Text(cleanContent(post.content)),
                                 trailing: SizedBox(
                                   width: 80, // Adjust the width as necessary
                                   child: Text(json.decode(post.author)["name"]),

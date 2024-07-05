@@ -20,7 +20,7 @@ class _NewpostpageState extends State<Newpostpage> {
   String _title = "";
   String _content = "";
   String _base64Image = "";
-  late String _selectedCommunity;
+  String? _selectedCommunity;
   final TextEditingController _contentController = TextEditingController();
 
   Future<void> _pickImage() async {
@@ -87,7 +87,7 @@ class _NewpostpageState extends State<Newpostpage> {
 
     // Create the post
     await Provider.of<PostsProvider>(context, listen: false)
-        .createPost(_title, _content, json.encode(author), _selectedCommunity);
+        .createPost(_title, _content, json.encode(author), _selectedCommunity!);
 
     Navigator.of(context).pop();
     Navigator.of(context).pop();
@@ -100,7 +100,7 @@ class _NewpostpageState extends State<Newpostpage> {
         title: const Text("New Post"),
         actions: [
           ElevatedButton(
-            onPressed: () => _createPost(context),
+            onPressed: _selectedCommunity == null ? null : () => _createPost(context),
             style: ElevatedButton.styleFrom(
               shape: const StadiumBorder(),
             ),
@@ -136,7 +136,7 @@ class _NewpostpageState extends State<Newpostpage> {
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            _selectedCommunity = value!;
+                            _selectedCommunity = value;
                           });
                         },
                       );
