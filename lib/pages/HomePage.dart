@@ -1,13 +1,13 @@
 // ignore: file_names
 // ignore: avoid_print
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seddit/MenuSidebar.dart';
-import 'package:seddit/models/Post.dart';
-import 'package:seddit/pages/NewPostPage.dart';
-import 'package:seddit/pages/PostCard.dart';
-import 'package:seddit/pages/CommunitiesPage.dart';
-import 'package:seddit/providers/PostsProvider.dart';
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:seddit/MenuSidebar.dart";
+import "package:seddit/models/Post.dart";
+import "package:seddit/pages/NewPostPage.dart";
+import "package:seddit/pages/PostCard.dart";
+import "package:seddit/pages/CommunitiesPage.dart";
+import "package:seddit/providers/PostsProvider.dart";
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});

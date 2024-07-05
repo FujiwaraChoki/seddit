@@ -4,13 +4,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seddit/models/Community.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:seddit/providers/PostsProvider.dart';
 import 'package:seddit/providers/CommunityProvider.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart'; // Import youtube_player_flutter package
 
 class Newpostpage extends StatefulWidget {
-  const Newpostpage({super.key});
+  const Newpostpage({Key? key}) : super(key: key);
 
   @override
   _NewpostpageState createState() => _NewpostpageState();
@@ -22,6 +24,14 @@ class _NewpostpageState extends State<Newpostpage> {
   String _base64Image = "";
   String? _selectedCommunity;
   final TextEditingController _contentController = TextEditingController();
+
+  YoutubePlayerController _youtubeController = YoutubePlayerController(
+    initialVideoId: 'iLnmTe5Q2Qw', // Initial video ID, replace with your own
+    flags: YoutubePlayerFlags(
+      autoPlay: true,
+      mute: true,
+    ),
+  );
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -89,8 +99,40 @@ class _NewpostpageState extends State<Newpostpage> {
     await Provider.of<PostsProvider>(context, listen: false)
         .createPost(_title, _content, json.encode(author), _selectedCommunity!);
 
-    Navigator.of(context).pop();
-    Navigator.of(context).pop();
+    // Play sound
+    final player = AudioPlayer();
+    await player.play(AssetSource("sounds/laugh.mp3"));
+
+    // After posting, show dialog to play YouTube video
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: YoutubePlayer(
+            controller: _youtubeController,
+            showVideoProgressIndicator: true,
+            progressIndicatorColor: Colors.amber,
+            progressColors: ProgressBarColors(
+              playedColor: Colors.amber,
+              handleColor: Colors.amberAccent,
+            ),
+            onReady: () {
+              // Perform any operations on player ready
+            },
+          ),
+        ),
+      ),
+    );
+
+    Navigator.of(context).pop(); // Dismiss posting dialog
+    Navigator.of(context).pop(); // Dismiss New Post page
+  }
+
+  @override
+  void dispose() {
+    _youtubeController.dispose(); // Dispose of YoutubePlayerController
+    super.dispose();
   }
 
   @override

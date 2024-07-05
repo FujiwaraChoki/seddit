@@ -1,13 +1,13 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seddit/models/Post.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:seddit/providers/PostsProvider.dart';
-import 'package:shake_detector_android/shake_detector_android.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:image_picker/image_picker.dart';
+import "dart:convert";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:seddit/models/Post.dart";
+import "package:flutter_markdown/flutter_markdown.dart";
+import "package:seddit/providers/PostsProvider.dart";
+import "package:shake_detector_android/shake_detector_android.dart";
+import "package:firebase_auth/firebase_auth.dart";
+import "package:flutter_secure_storage/flutter_secure_storage.dart";
+import "package:image_picker/image_picker.dart";
 
 String cleanContent(String content, bool fromPostPage) {
   String cleanedContent = content;

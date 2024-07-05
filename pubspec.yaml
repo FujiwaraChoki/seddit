@@ -1,5 +1,5 @@
 name: seddit
-description: "A Reddot Clone for Android and iOS."
+description: "A Reddit Clone for Android and iOS."
 publish_to: "none"
 
 version: 1.0.0+1
@@ -27,6 +27,8 @@ dependencies:
   firebase_dynamic_links: ^6.0.2
   flutter_secure_storage: ^4.2.1
   flutter_launcher_icons: ^0.13.1
+  audioplayers: ^6.0.0
+  youtube_player_flutter: ^8.1.2
 
 dev_dependencies:
   flutter_test:
@@ -34,8 +36,9 @@ dev_dependencies:
 
   flutter_lints: ^3.0.0
 
+# Set icon to assets/images/logo.png
 flutter_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
   image_path: "assets/images/logo.png"
 
@@ -45,4 +48,5 @@ flutter:
   assets:
   - assets/
   - assets/images/
+  - assets/sounds/
   - .env

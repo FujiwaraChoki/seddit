@@ -1,10 +1,10 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:seddit/models/Community.dart';
-import 'package:seddit/models/Post.dart';
-import 'package:seddit/pages/PostCard.dart';
-import 'package:seddit/providers/CommunityProvider.dart';
+import "dart:convert";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:seddit/models/Community.dart";
+import "package:seddit/models/Post.dart";
+import "package:seddit/pages/PostCard.dart";
+import "package:seddit/providers/CommunityProvider.dart";
 
 class CommunityPage extends StatefulWidget {
   final String communityName;
