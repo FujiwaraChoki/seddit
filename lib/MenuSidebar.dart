@@ -9,7 +9,7 @@ class Sidebar extends StatefulWidget {
 }
 
 class _SidebarState extends State<Sidebar> {
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   bool exitOnShake = false;
 
   @override

@@ -169,7 +169,7 @@ class _PostsList extends StatelessWidget {
                 itemBuilder: (context, index) {
                   var post = posts[index];
                   return SizedBox(
-                    height: 200,
+                    height: 250,
                     child: PostCard(post),
                   );
                 },

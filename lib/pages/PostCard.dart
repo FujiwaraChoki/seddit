@@ -26,9 +26,9 @@ String cleanContent(String content, bool fromPostPage) {
 class PostCard extends StatelessWidget {
   final Post post;
   final bool fromPostPage;
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
-  PostCard(this.post, {this.fromPostPage = false, Key? key}) : super(key: key);
+  const PostCard(this.post, {this.fromPostPage = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -340,8 +340,8 @@ class AssetsSection extends StatelessWidget {
     required this.post,
     required this.fromEditPage,
     this.pickImage,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
