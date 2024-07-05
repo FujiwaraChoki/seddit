@@ -133,7 +133,7 @@ class PostPage extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: Text(post.title),
+        title: Text("${post.title} - s/${post.community}"),
         actions: [
           if (currentUser!.uid == author["id"])
             IconButton(
