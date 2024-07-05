@@ -50,20 +50,14 @@ class PostsService {
 
     if (index != -1) {
       _posts[index] = post;
-
-      await db.collection("posts").update(
-        where.eq("id", post.id),
-        {
-          r"$set": {
-            "title": post.title,
-            "content": post.content,
-            "author": post.author,
-          }
-        },
-      );
-
-      await db.close();
     }
+
+    await db.collection("posts").update(
+      where.eq("id", post.id),
+      modify.set("title", post.title).set("content", post.content),
+    );
+
+    await db.close();
   }
 
   Future<void> delete(String id) async {
